@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const createError = require('http-errors');
 const xssClean = require('xss-clean');
 const { rateLimit } = require('express-rate-limit');
+const userRouter = require('./routers/userRouter');
 const app = express();
 
 const rateLimiter = rateLimit({
@@ -17,6 +18,8 @@ app.use(morgan("dev"));
 app.use(xssClean());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/api/users", userRouter);
 
 
 app.get('/test', (req, res) => {
