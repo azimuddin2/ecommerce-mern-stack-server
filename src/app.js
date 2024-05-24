@@ -20,8 +20,8 @@ app.use(xssClean());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api/users', userRouter);
 app.use('/api/seed', seedRouter);
+app.use('/api/users', userRouter);
 
 
 app.get('/test', (req, res) => {
