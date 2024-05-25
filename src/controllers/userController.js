@@ -1,7 +1,8 @@
 const createHttpError = require("http-errors");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
-const mongoose = require("mongoose");
+const { findWithId } = require("../services/findWithId");
+const { deleteImage } = require("../helper/deleteImage");
 
 const getUsers = async (req, res, next) => {
     try {
@@ -49,16 +50,12 @@ const getUsers = async (req, res, next) => {
     }
 };
 
-const getUser = async (req, res, next) => {
+const getUserById = async (req, res, next) => {
     try {
         const id = req.params.id;
         const options = { password: 0 };
 
-        const user = await User.findById(id, options);
-
-        if (!user) {
-            throw createHttpError(404, "user does not exist with this id");
-        }
+        const user = await findWithId(User, id, options);
 
         return successResponse(res, {
             statusCode: 200,
@@ -66,12 +63,32 @@ const getUser = async (req, res, next) => {
             payload: { user },
         });
     } catch (error) {
-        if (error instanceof mongoose.Error) {
-            next(createHttpError(400, 'Invalid User Id'));
-        }
+        next(error);
+    }
+};
+
+const deleteUserById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const options = { password: 0 };
+        const user = await findWithId(User, id, options);
+
+        const userImagePath = user.image;
+        deleteImage(userImagePath);
+
+        await User.findByIdAndDelete({
+            _id: id,
+            isAdmin: false,
+        });
+        
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'User were deleted successfully',
+        });
+    } catch (error) {
         next(error);
     }
 };
 
 
-module.exports = { getUsers, getUser };
+module.exports = { getUsers, getUserById, deleteUserById };
