@@ -17,4 +17,5 @@
 13. Schema & Model fo user
 14. Create seed route for testing
 15. GET /api/users -> isAdmin -> getAllUsers -> search + pagination functionality
-16. 
+16. responseHandler controller for error & success
+17. GET /api/users/:id -> get a single user by id
