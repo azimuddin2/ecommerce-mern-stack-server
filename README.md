@@ -28,3 +28,4 @@
 24. setup smtp server & prepare email
 25. send email with nodemailer
 26. POST /api/users/verify -> verify + register into database
+27. add multer middleware for file upload
