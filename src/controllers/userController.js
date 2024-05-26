@@ -3,6 +3,8 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findWithId");
 const { deleteImage } = require("../helper/deleteImage");
+const { createJsonWebToken } = require("../helper/jsonWebToken");
+const { jwtActivationKey } = require("../secret");
 
 const getUsers = async (req, res, next) => {
     try {
@@ -102,18 +104,17 @@ const processRegister = async (req, res, next) => {
             );
         }
 
-        const newUser = {
-            name,
-            email,
-            password,
-            phone,
-            address
-        };
+        // create json web token
+        const token = createJsonWebToken(
+            { name, email, password, phone, address },
+            jwtActivationKey,
+            '1h'
+        );
 
         return successResponse(res, {
             statusCode: 200,
             message: 'user was created successfully',
-            payload: { newUser },
+            payload: { token },
         });
 
     } catch (error) {
