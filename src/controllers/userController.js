@@ -4,7 +4,7 @@ const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findWithId");
 const { deleteImage } = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
-const { jwtActivationKey } = require("../secret");
+const { jwtActivationKey, clientURL } = require("../secret");
 
 const getUsers = async (req, res, next) => {
     try {
@@ -110,6 +110,18 @@ const processRegister = async (req, res, next) => {
             jwtActivationKey,
             '1h'
         );
+
+        // prepare email
+        const emailData = {
+            email,
+            subject: 'Account Activation Email',
+            html: `
+                <h2> Hello ${name}! </h2>
+                <p> Please click here to <a href="${clientURL}/api/users/activate/${token}" target="_blank"> activate your account </a> </p>
+            `,
+        };
+
+        // send email with nodemailer
 
         return successResponse(res, {
             statusCode: 200,
