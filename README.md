@@ -26,3 +26,4 @@
 22. POST /api/users/process-register => process the registration
 23. create json web token
 24. setup smtp server & prepare email
+25. send email with nodemailer

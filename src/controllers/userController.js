@@ -5,6 +5,7 @@ const { findWithId } = require("../services/findWithId");
 const { deleteImage } = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientURL } = require("../secret");
+const emailWithNodeMailer = require("../helper/email");
 
 const getUsers = async (req, res, next) => {
     try {
@@ -122,10 +123,16 @@ const processRegister = async (req, res, next) => {
         };
 
         // send email with nodemailer
+        try {
+            await emailWithNodeMailer(emailData);
+        } catch (emailError) {
+            next(createHttpError(500, 'Failed to send verification email'));
+            return;
+        }
 
         return successResponse(res, {
             statusCode: 200,
-            message: 'user was created successfully',
+            message: `Please go to your ${email} for completing your registration process`,
             payload: { token },
         });
 
@@ -133,7 +140,6 @@ const processRegister = async (req, res, next) => {
         next(error);
     }
 };
-
 
 module.exports = {
     getUsers,
