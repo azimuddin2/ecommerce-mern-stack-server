@@ -20,10 +20,11 @@
 16. responseHandler controller for error & success
 17. GET /api/users/:id -> get a single user by id
 18. How to create services in the backend
-19. DELETE /api/users/:id => delete a single user by id
+19. DELETE /api/users/:id -> delete a single user by id
 20. Refactoring & reusability, dynamic
 21. deleteImage helper
-22. POST /api/users/process-register => process the registration
+22. POST /api/users/process-register -> process the registration
 23. create json web token
 24. setup smtp server & prepare email
 25. send email with nodemailer
+26. POST /api/users/verify -> verify + register into database
