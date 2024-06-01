@@ -29,3 +29,5 @@
 25. send email with nodemailer
 26. POST /api/users/verify -> verify + register into database
 27. add multer middleware for file upload
+28. filtering files by size and types
+29. add express validator middleware
