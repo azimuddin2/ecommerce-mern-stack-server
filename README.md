@@ -31,3 +31,4 @@
 27. add multer middleware for file upload
 28. filtering files by size and types
 29. add express validator middleware
+30. should we store image as string or buffer
