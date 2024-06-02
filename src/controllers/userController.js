@@ -7,6 +7,7 @@ const { deleteImage } = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
+const { MAX_FILE_SIZE } = require("../config");
 
 const getUsers = async (req, res, next) => {
     try {
@@ -98,7 +99,15 @@ const processRegister = async (req, res, next) => {
     try {
         const { name, email, password, phone, address } = req.body;
 
-        const imageBufferString = req.file.buffer.toString('base64');
+        const image = req.file;
+        if (!image) {
+            throw createHttpError(400, 'Image file is required');
+        }
+        if (image.size > MAX_FILE_SIZE) {
+            throw createHttpError(400, 'File to large. It must be less than 2 MB');
+        }
+
+        const imageBufferString = image.buffer.toString('base64');
 
         const userExists = await User.exists({ email: email });
         if (userExists) {
@@ -186,10 +195,52 @@ const activateUserAccount = async (req, res, next) => {
     }
 };
 
+const updateUserById = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const options = { new: true, runValidators: true, context: 'query' };
+        await findWithId(User, userId, options);
+
+        let updates = {};
+
+        for (let key in req.body) {
+            if (['name', 'password', 'address', 'phone'].includes(key)) {
+                updates[key] = req.body[key];
+            }
+            else if (['email'].includes(key)) {
+                throw createHttpError(400, 'Email can not ve updated');
+            }
+        }
+
+        const image = req.file;
+        if (image) {
+            if (image.size > MAX_FILE_SIZE) {
+                throw createHttpError(400, 'File to large. It must be less than 2 MB');
+            }
+            updates.image = image.buffer.toString('base64');
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, options).select('-password');
+
+        if (!updatedUser) {
+            throw createHttpError(404, 'User with this ID does not exist');
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'user was updated successfully',
+            payload: updatedUser,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getUsers,
     getUserById,
     deleteUserById,
     processRegister,
     activateUserAccount,
+    updateUserById,
 };
