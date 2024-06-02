@@ -78,13 +78,14 @@ const deleteUserById = async (req, res, next) => {
         const options = { password: 0 };
         const user = await findWithId(User, id, options);
 
-        const userImagePath = user.image;
-        deleteImage(userImagePath);
-
         await User.findByIdAndDelete({
             _id: id,
             isAdmin: false,
         });
+
+        if (user && user.image) {
+            await deleteImage(user.image);
+        }
 
         return successResponse(res, {
             statusCode: 200,
@@ -99,15 +100,10 @@ const processRegister = async (req, res, next) => {
     try {
         const { name, email, password, phone, address } = req.body;
 
-        const image = req.file;
-        if (!image) {
-            throw createHttpError(400, 'Image file is required');
-        }
-        if (image.size > MAX_FILE_SIZE) {
+        const image = req.file?.path;
+        if (image && image.size > MAX_FILE_SIZE) {
             throw createHttpError(400, 'File to large. It must be less than 2 MB');
         }
-
-        const imageBufferString = image.buffer.toString('base64');
 
         const userExists = await User.exists({ email: email });
         if (userExists) {
@@ -118,8 +114,20 @@ const processRegister = async (req, res, next) => {
         }
 
         // create json web token
+        const tokenPayload = {
+            name,
+            email,
+            password,
+            phone,
+            address,
+        };
+
+        if (image) {
+            tokenPayload.image = image;
+        }
+
         const token = createJsonWebToken(
-            { name, email, password, phone, address, image: imageBufferString },
+            tokenPayload,
             jwtActivationKey,
             '1h'
         );
@@ -198,13 +206,16 @@ const activateUserAccount = async (req, res, next) => {
 const updateUserById = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const options = { new: true, runValidators: true, context: 'query' };
-        await findWithId(User, userId, options);
+        const options = { password: 0 };
+        const user = await findWithId(User, userId, options);
 
+        const updateOptions = { new: true, runValidators: true, context: 'query' };
         let updates = {};
 
+        const allowedFields = ['name', 'password', 'address', 'phone'];
+
         for (let key in req.body) {
-            if (['name', 'password', 'address', 'phone'].includes(key)) {
+            if (allowedFields.includes(key)) {
                 updates[key] = req.body[key];
             }
             else if (['email'].includes(key)) {
@@ -212,15 +223,16 @@ const updateUserById = async (req, res, next) => {
             }
         }
 
-        const image = req.file;
+        const image = req.file?.path;
         if (image) {
             if (image.size > MAX_FILE_SIZE) {
                 throw createHttpError(400, 'File to large. It must be less than 2 MB');
             }
-            updates.image = image.buffer.toString('base64');
+            updates.image = image;
+            user.image !== 'user.png' && deleteImage(user.image);
         }
 
-        const updatedUser = await User.findByIdAndUpdate(userId, updates, options).select('-password');
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, updateOptions).select('-password');
 
         if (!updatedUser) {
             throw createHttpError(404, 'User with this ID does not exist');
