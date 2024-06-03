@@ -1,4 +1,4 @@
-const createHttpError = require("http-errors");
+const createError = require("http-errors");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const bcrypt = require('bcryptjs');
@@ -12,7 +12,7 @@ const handleLogin = async (req, res, next) => {
         // isExist
         const user = await User.findOne({ email });
         if (!user) {
-            throw createHttpError(
+            throw createError(
                 404,
                 'User does not exist with this email. Please register first'
             );
@@ -21,7 +21,7 @@ const handleLogin = async (req, res, next) => {
         // compare the password
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
-            throw createHttpError(
+            throw createError(
                 401,
                 'Password did not match'
             );
@@ -29,7 +29,7 @@ const handleLogin = async (req, res, next) => {
 
         // isBanned
         if (user.isBanned === true) {
-            throw createHttpError(
+            throw createError(
                 403,
                 'You are banned. Please contact authority'
             );
@@ -37,11 +37,11 @@ const handleLogin = async (req, res, next) => {
 
         // token, cookie
         const accessToken = createJsonWebToken(
-            { email },
+            { _id: user._id },
             jwtAccessKey,
             '1h'
         );
-        res.cookie('access_token', accessToken, {
+        res.cookie('accessToken', accessToken, {
             maxAge: 15 * 60 * 1000, // 15 minutes
             httpOnly: true,
             secure: true,
@@ -60,7 +60,7 @@ const handleLogin = async (req, res, next) => {
 
 const handleLogout = async (req, res, next) => {
     try {
-        res.clearCookie('access_token');
+        res.clearCookie('accessToken');
 
         return successResponse(res, {
             statusCode: 200,

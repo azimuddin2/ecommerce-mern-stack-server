@@ -10,6 +10,7 @@ const {
 const uploadUserImage = require('../middlewares/uploadFile');
 const { validateUserRegistration } = require('../validators/auth');
 const runValidation = require('../validators');
+const { isLoggedIn } = require('../middlewares/auth');
 const userRouter = express.Router();
 
 userRouter.post(
@@ -19,10 +20,30 @@ userRouter.post(
     runValidation,
     processRegister
 );
-userRouter.post('/activate', activateUserAccount);
-userRouter.get('/', getUsers);
-userRouter.get('/:id', getUserById);
-userRouter.delete('/:id', deleteUserById);
-userRouter.put('/:id', uploadUserImage.single("image"), updateUserById);
+userRouter.post(
+    '/activate',
+    activateUserAccount
+);
+userRouter.get(
+    '/',
+    isLoggedIn,
+    getUsers
+);
+userRouter.get(
+    '/:id',
+    isLoggedIn,
+    getUserById
+);
+userRouter.delete(
+    '/:id',
+    isLoggedIn,
+    deleteUserById
+);
+userRouter.put(
+    '/:id',
+    isLoggedIn,
+    uploadUserImage.single("image"),
+    updateUserById
+);
 
 module.exports = userRouter;
