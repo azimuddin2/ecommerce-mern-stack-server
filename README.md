@@ -33,3 +33,4 @@
 29. add express validator middleware
 30. should we store image as string or buffer
 31. PUT /api/users/:id -> update a single user by id
+32. POST /api/auth/login -> user login

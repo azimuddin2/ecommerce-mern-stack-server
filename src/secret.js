@@ -6,7 +6,9 @@ const mongodbURL = process.env.MONGODB_ATLAS_URL || "mongodb://localhost:27017/e
 
 const defaultImagePath = process.env.DEFAULT_IMAGE_PATH || "public/images/users/user.png";
 
-const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "adlf#kjafd3k0dsk3kl9$lk2%k3&4kdv74@k%kk$se";
+const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || "75ebaee6e91737af8da5b444744bb500328f29192b4185c1d22a";
+
+const jwtAccessKey = process.env.JWT_ACCESS_KEY || "8d0ac31bb03ee4dad3a99df7s13ke34k4b338781361dce86dd2f4c2"
 
 const smtpUsername = process.env.SMTP_USERNAME || "";
 const smtpPassword = process.env.SMTP_PASSWORD || "";
@@ -18,6 +20,7 @@ module.exports = {
     mongodbURL,
     defaultImagePath,
     jwtActivationKey,
+    jwtAccessKey,
     smtpUsername,
     smtpPassword,
     clientURL,
