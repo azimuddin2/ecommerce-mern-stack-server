@@ -20,7 +20,7 @@ const isLoggedIn = async (req, res, next) => {
             );
         }
 
-        req.body.userId = decoded._id;
+        req.user = decoded.user;
         next();
     } catch (error) {
         next(error);
@@ -50,4 +50,19 @@ const isLoggedOut = async (req, res, next) => {
     }
 };
 
-module.exports = { isLoggedIn, isLoggedOut };
+const isAdmin = async (req, res, next) => {
+    try {
+        const admin = req.user.isAdmin;
+        if (!admin) {
+            throw createError(
+                403,
+                'Forbidden. You must be an admin to access this resource'
+            );
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { isLoggedIn, isLoggedOut, isAdmin };

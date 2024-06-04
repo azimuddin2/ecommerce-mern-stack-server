@@ -10,7 +10,7 @@ const {
 const uploadUserImage = require('../middlewares/uploadFile');
 const { validateUserRegistration } = require('../validators/auth');
 const runValidation = require('../validators');
-const { isLoggedIn, isLoggedOut } = require('../middlewares/auth');
+const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 const userRouter = express.Router();
 
 userRouter.post(
@@ -29,6 +29,7 @@ userRouter.post(
 userRouter.get(
     '/',
     isLoggedIn,
+    isAdmin,
     getUsers
 );
 userRouter.get(

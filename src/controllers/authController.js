@@ -37,12 +37,12 @@ const handleLogin = async (req, res, next) => {
 
         // token, cookie
         const accessToken = createJsonWebToken(
-            { _id: user._id },
+            { user },
             jwtAccessKey,
             '30m'
         );
         res.cookie('accessToken', accessToken, {
-            maxAge: 30 * 60 * 1000, // 1 hour
+            maxAge: 30 * 60 * 1000,
             httpOnly: true,
             secure: true,
             sameSite: 'none',
