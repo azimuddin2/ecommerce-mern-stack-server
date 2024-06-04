@@ -35,4 +35,5 @@
 31. PUT /api/users/:id -> update a single user by id
 32. POST /api/auth/login -> user login
 33. POST /api/auth/logout -> user logout
-34. Middleware -> isLoggedIn, isLoggedOut, isAdmin 
+34. Middleware -> isLoggedIn, isLoggedOut, isAdmin
+35. input validation when signed in and refactoring
