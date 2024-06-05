@@ -8,6 +8,7 @@ const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const { MAX_FILE_SIZE } = require("../config");
+const { handleUserAction } = require("../services/userService");
 
 const getUsers = async (req, res, next) => {
     try {
@@ -252,61 +253,16 @@ const updateUserById = async (req, res, next) => {
     }
 };
 
-const handleBannedUserById = async (req, res, next) => {
+const handleManageUserStatusById = async (req, res, next) => {
     try {
         const id = req.params.id;
-        await findWithId(User, id);
+        const action = req.body.action;
 
-        const updateDoc = { isBanned: true };
-        const updateOptions = { new: true, runValidators: true, context: 'query' };
-
-        const updatedUser = await User.findByIdAndUpdate(
-            id,
-            updateDoc,
-            updateOptions
-        ).select('-password');
-
-        if(!updatedUser){
-            throw createHttpError(
-                400,
-                'User was not banned successfully'
-            );
-        }
+        const { updatedUser, successMessage } = await handleUserAction(id, action);
 
         return successResponse(res, {
             statusCode: 200,
-            message: 'User was banned successfully',
-            payload: updatedUser,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-const handleUnbannedUserById = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        await findWithId(User, id);
-
-        const updateDoc = { isBanned: false };
-        const updateOptions = { new: true, runValidators: true, context: 'query' };
-
-        const updatedUser = await User.findByIdAndUpdate(
-            id,
-            updateDoc,
-            updateOptions
-        ).select('-password');
-
-        if(!updatedUser){
-            throw createHttpError(
-                400,
-                'User was not unbanned successfully'
-            );
-        }
-
-        return successResponse(res, {
-            statusCode: 200,
-            message: 'User was unbanned successfully',
+            message: successMessage,
             payload: updatedUser,
         });
     } catch (error) {
@@ -321,6 +277,5 @@ module.exports = {
     processRegister,
     activateUserAccount,
     updateUserById,
-    handleBannedUserById,
-    handleUnbannedUserById,
+    handleManageUserStatusById
 };
