@@ -37,4 +37,5 @@
 33. POST /api/auth/logout -> user logout
 34. Middleware -> isLoggedIn, isLoggedOut, isAdmin
 35. input validation when signed in and refactoring
-36. PUT /api/users/ban-user/:id -> ban user
+36. PUT /api/users/banned-user/:id -> banned user
+37. PUT /api/users/unbanned-user/:id -> unbanned user

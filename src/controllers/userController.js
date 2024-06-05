@@ -252,7 +252,7 @@ const updateUserById = async (req, res, next) => {
     }
 };
 
-const handleBanUserById = async (req, res, next) => {
+const handleBannedUserById = async (req, res, next) => {
     try {
         const id = req.params.id;
         await findWithId(User, id);
@@ -283,6 +283,37 @@ const handleBanUserById = async (req, res, next) => {
     }
 };
 
+const handleUnbannedUserById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await findWithId(User, id);
+
+        const updateDoc = { isBanned: false };
+        const updateOptions = { new: true, runValidators: true, context: 'query' };
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            updateDoc,
+            updateOptions
+        ).select('-password');
+
+        if(!updatedUser){
+            throw createHttpError(
+                400,
+                'User was not unbanned successfully'
+            );
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'User was unbanned successfully',
+            payload: updatedUser,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getUsers,
     getUserById,
@@ -290,5 +321,6 @@ module.exports = {
     processRegister,
     activateUserAccount,
     updateUserById,
-    handleBanUserById,
+    handleBannedUserById,
+    handleUnbannedUserById,
 };
