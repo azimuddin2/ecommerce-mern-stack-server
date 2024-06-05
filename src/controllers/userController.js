@@ -232,7 +232,11 @@ const updateUserById = async (req, res, next) => {
             user.image !== 'user.png' && deleteImage(user.image);
         }
 
-        const updatedUser = await User.findByIdAndUpdate(userId, updates, updateOptions).select('-password');
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            updates,
+            updateOptions
+        ).select('-password');
 
         if (!updatedUser) {
             throw createHttpError(404, 'User with this ID does not exist');
@@ -248,6 +252,37 @@ const updateUserById = async (req, res, next) => {
     }
 };
 
+const handleBanUserById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await findWithId(User, id);
+
+        const updateDoc = { isBanned: true };
+        const updateOptions = { new: true, runValidators: true, context: 'query' };
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            updateDoc,
+            updateOptions
+        ).select('-password');
+
+        if(!updatedUser){
+            throw createHttpError(
+                400,
+                'User was not banned successfully'
+            );
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'User was banned successfully',
+            payload: updatedUser,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getUsers,
     getUserById,
@@ -255,4 +290,5 @@ module.exports = {
     processRegister,
     activateUserAccount,
     updateUserById,
+    handleBanUserById,
 };
