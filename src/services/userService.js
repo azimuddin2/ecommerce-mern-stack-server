@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const User = require("../models/userModel");
+const { deleteImage } = require("../helper/deleteImage");
 
 const findUsers = async (search, page, limit) => {
     try {
@@ -56,6 +57,24 @@ const findUserById = async (id) => {
     }
 };
 
+const deleteUserById = async (id) => {
+    try {
+        const options = { password: 0 };
+        const user = await findUserById(id, options);
+
+        await User.findByIdAndDelete({
+            _id: id,
+            isAdmin: false,
+        });
+
+        if (user && user.image) {
+            await deleteImage(user.image);
+        }
+
+    } catch (error) {
+        throw error;
+    }
+};
 
 const handleUserAction = async (id, action) => {
     try {
@@ -100,5 +119,6 @@ const handleUserAction = async (id, action) => {
 module.exports = {
     findUsers,
     findUserById,
+    deleteUserById,
     handleUserAction,
 };

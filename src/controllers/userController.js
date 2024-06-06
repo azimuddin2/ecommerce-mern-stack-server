@@ -8,7 +8,7 @@ const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const { MAX_FILE_SIZE } = require("../config");
-const { handleUserAction, findUsers, findUserById } = require("../services/userService");
+const { handleUserAction, findUsers, findUserById, deleteUserById } = require("../services/userService");
 
 const handleGetUsers = async (req, res, next) => {
     try {
@@ -46,23 +46,10 @@ const handleGetUserById = async (req, res, next) => {
     }
 };
 
-
-
-
-const deleteUserById = async (req, res, next) => {
+const handleDeleteUserById = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const options = { password: 0 };
-        const user = await findWithId(User, id, options);
-
-        await User.findByIdAndDelete({
-            _id: id,
-            isAdmin: false,
-        });
-
-        if (user && user.image) {
-            await deleteImage(user.image);
-        }
+        await deleteUserById(id);
 
         return successResponse(res, {
             statusCode: 200,
@@ -249,7 +236,7 @@ const handleManageUserStatusById = async (req, res, next) => {
 module.exports = {
     handleGetUsers,
     handleGetUserById,
-    deleteUserById,
+    handleDeleteUserById,
     processRegister,
     activateUserAccount,
     updateUserById,

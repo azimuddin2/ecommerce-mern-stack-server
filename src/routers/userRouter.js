@@ -1,11 +1,11 @@
 const express = require('express');
 const {
-    handleGetUsers,
-    handleGetUserById,
-    deleteUserById,
     processRegister,
     activateUserAccount,
     updateUserById,
+    handleGetUsers,
+    handleGetUserById,
+    handleDeleteUserById,
     handleManageUserStatusById,
 } = require('../controllers/userController');
 const uploadUserImage = require('../middlewares/uploadFile');
@@ -41,7 +41,8 @@ userRouter.get(
 userRouter.delete(
     '/:id',
     isLoggedIn,
-    deleteUserById
+    isAdmin,
+    handleDeleteUserById
 );
 userRouter.put(
     '/:id',
