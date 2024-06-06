@@ -40,6 +40,22 @@ const findUsers = async (search, page, limit) => {
     }
 };
 
+const findUserById = async (id) => {
+    try {
+        const options = { password: 0 };
+
+        const user = await User.findById(id, options).select('-password');
+        if (!user) {
+            throw createError(404, 'User not found');
+        }
+
+        return user;
+
+    } catch (error) {
+        throw error;
+    }
+};
+
 
 const handleUserAction = async (id, action) => {
     try {
@@ -83,5 +99,6 @@ const handleUserAction = async (id, action) => {
 
 module.exports = {
     findUsers,
+    findUserById,
     handleUserAction,
 };

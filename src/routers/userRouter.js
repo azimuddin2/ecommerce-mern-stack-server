@@ -1,7 +1,7 @@
 const express = require('express');
 const {
     handleGetUsers,
-    getUserById,
+    handleGetUserById,
     deleteUserById,
     processRegister,
     activateUserAccount,
@@ -36,7 +36,7 @@ userRouter.get(
 userRouter.get(
     '/:id',
     isLoggedIn,
-    getUserById
+    handleGetUserById
 );
 userRouter.delete(
     '/:id',
