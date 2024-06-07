@@ -1,4 +1,5 @@
 const createError = require("http-errors");
+const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const { deleteImage } = require("../helper/deleteImage");
 const { MAX_FILE_SIZE } = require("../config");
@@ -54,6 +55,9 @@ const findUserById = async (id) => {
         return user;
 
     } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            throw createError(400, 'Invalid Id');
+        }
         throw error;
     }
 };
@@ -73,10 +77,12 @@ const deleteUserById = async (id) => {
         }
 
     } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            throw createError(400, 'Invalid Id');
+        }
         throw error;
     }
 };
-
 
 const updateUserById = async (id, req) => {
     try {
@@ -119,11 +125,12 @@ const updateUserById = async (id, req) => {
         return updatedUser;
 
     } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            throw createError(400, 'Invalid Id');
+        }
         throw error;
     }
 };
-
-
 
 const handleUserAction = async (id, action) => {
     try {
@@ -161,6 +168,9 @@ const handleUserAction = async (id, action) => {
         return { updatedUser, successMessage };
 
     } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            throw createError(400, 'Invalid Id');
+        }
         throw error;
     }
 };

@@ -1,66 +1,20 @@
 const createHttpError = require("http-errors");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
-const { findWithId } = require("../services/findWithId");
-const { deleteImage } = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const { MAX_FILE_SIZE } = require("../config");
-const { handleUserAction, findUsers, findUserById, deleteUserById, updateUserById } = require("../services/userService");
+const {
+    findUsers,
+    findUserById,
+    deleteUserById,
+    updateUserById,
+    handleUserAction
+} = require("../services/userService");
 
-const handleGetUsers = async (req, res, next) => {
-    try {
-        const search = req.query.search || "";
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 6;
-
-        const { users, pagination } = await findUsers(search, page, limit);
-
-        return successResponse(res, {
-            statusCode: 200,
-            message: 'Users were returned successfully',
-            payload: {
-                users,
-                pagination
-            },
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-const handleGetUserById = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        const user = await findUserById(id);
-
-        return successResponse(res, {
-            statusCode: 200,
-            message: 'User were returned successfully',
-            payload: { user },
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-const handleDeleteUserById = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        await deleteUserById(id);
-
-        return successResponse(res, {
-            statusCode: 200,
-            message: 'User were deleted successfully',
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-const processRegister = async (req, res, next) => {
+const handleProcessRegister = async (req, res, next) => {
     try {
         const { name, email, password, phone, address } = req.body;
 
@@ -125,7 +79,7 @@ const processRegister = async (req, res, next) => {
     }
 };
 
-const activateUserAccount = async (req, res, next) => {
+const handleActivateUserAccount = async (req, res, next) => {
     try {
         const token = req.body.token;
         if (!token) {
@@ -167,11 +121,60 @@ const activateUserAccount = async (req, res, next) => {
     }
 };
 
+const handleGetUsers = async (req, res, next) => {
+    try {
+        const search = req.query.search || "";
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 6;
+
+        const { users, pagination } = await findUsers(search, page, limit);
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'Users were returned successfully',
+            payload: {
+                users,
+                pagination
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const handleGetUserById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const user = await findUserById(id);
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'User were returned successfully',
+            payload: { user },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const handleDeleteUserById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await deleteUserById(id);
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'User were deleted successfully',
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 const handleUpdateUserById = async (req, res, next) => {
     try {
         const id = req.params.id;
-        
+
         const updatedUser = await updateUserById(id, req);
 
         return successResponse(res, {
@@ -183,7 +186,6 @@ const handleUpdateUserById = async (req, res, next) => {
         next(error);
     }
 };
-
 
 const handleManageUserStatusById = async (req, res, next) => {
     try {
@@ -203,11 +205,11 @@ const handleManageUserStatusById = async (req, res, next) => {
 };
 
 module.exports = {
+    handleProcessRegister,
+    handleActivateUserAccount,
     handleGetUsers,
     handleGetUserById,
     handleDeleteUserById,
-    processRegister,
-    activateUserAccount,
     handleUpdateUserById,
     handleManageUserStatusById
 };

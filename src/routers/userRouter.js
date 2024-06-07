@@ -1,7 +1,7 @@
 const express = require('express');
 const {
-    processRegister,
-    activateUserAccount,
+    handleProcessRegister,
+    handleActivateUserAccount,
     handleGetUsers,
     handleGetUserById,
     handleDeleteUserById,
@@ -20,12 +20,12 @@ userRouter.post(
     isLoggedOut,
     validateUserRegistration,
     runValidation,
-    processRegister
+    handleProcessRegister
 );
 userRouter.post(
     '/activate',
     isLoggedOut,
-    activateUserAccount
+    handleActivateUserAccount
 );
 userRouter.get(
     '/',
