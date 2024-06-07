@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const User = require("../models/userModel");
 const { deleteImage } = require("../helper/deleteImage");
+const { MAX_FILE_SIZE } = require("../config");
 
 const findUsers = async (search, page, limit) => {
     try {
@@ -76,6 +77,54 @@ const deleteUserById = async (id) => {
     }
 };
 
+
+const updateUserById = async (id, req) => {
+    try {
+        const options = { password: 0 };
+        const user = await findUserById(id, options);
+
+        const updateOptions = { new: true, runValidators: true, context: 'query' };
+        let updates = {};
+
+        const allowedFields = ['name', 'password', 'address', 'phone'];
+
+        for (let key in req.body) {
+            if (allowedFields.includes(key)) {
+                updates[key] = req.body[key];
+            }
+            else if (['email'].includes(key)) {
+                throw createError(400, 'Email can not be updated');
+            }
+        }
+
+        const image = req.file?.path;
+        if (image) {
+            if (image.size > MAX_FILE_SIZE) {
+                throw createError(400, 'File to large. It must be less than 2 MB');
+            }
+            updates.image = image;
+            user.image !== 'user.png' && deleteImage(user.image);
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            updates,
+            updateOptions
+        ).select('-password');
+
+        if (!updatedUser) {
+            throw createError(404, 'User with this ID does not exist');
+        }
+
+        return updatedUser;
+
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+
 const handleUserAction = async (id, action) => {
     try {
         let update;
@@ -120,5 +169,6 @@ module.exports = {
     findUsers,
     findUserById,
     deleteUserById,
+    updateUserById,
     handleUserAction,
 };

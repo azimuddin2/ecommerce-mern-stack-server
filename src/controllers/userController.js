@@ -8,7 +8,7 @@ const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const { MAX_FILE_SIZE } = require("../config");
-const { handleUserAction, findUsers, findUserById, deleteUserById } = require("../services/userService");
+const { handleUserAction, findUsers, findUserById, deleteUserById, updateUserById } = require("../services/userService");
 
 const handleGetUsers = async (req, res, next) => {
     try {
@@ -167,44 +167,12 @@ const activateUserAccount = async (req, res, next) => {
     }
 };
 
-const updateUserById = async (req, res, next) => {
+
+const handleUpdateUserById = async (req, res, next) => {
     try {
-        const userId = req.params.id;
-        const options = { password: 0 };
-        const user = await findWithId(User, userId, options);
-
-        const updateOptions = { new: true, runValidators: true, context: 'query' };
-        let updates = {};
-
-        const allowedFields = ['name', 'password', 'address', 'phone'];
-
-        for (let key in req.body) {
-            if (allowedFields.includes(key)) {
-                updates[key] = req.body[key];
-            }
-            else if (['email'].includes(key)) {
-                throw createHttpError(400, 'Email can not ve updated');
-            }
-        }
-
-        const image = req.file?.path;
-        if (image) {
-            if (image.size > MAX_FILE_SIZE) {
-                throw createHttpError(400, 'File to large. It must be less than 2 MB');
-            }
-            updates.image = image;
-            user.image !== 'user.png' && deleteImage(user.image);
-        }
-
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            updates,
-            updateOptions
-        ).select('-password');
-
-        if (!updatedUser) {
-            throw createHttpError(404, 'User with this ID does not exist');
-        }
+        const id = req.params.id;
+        
+        const updatedUser = await updateUserById(id, req);
 
         return successResponse(res, {
             statusCode: 200,
@@ -215,6 +183,7 @@ const updateUserById = async (req, res, next) => {
         next(error);
     }
 };
+
 
 const handleManageUserStatusById = async (req, res, next) => {
     try {
@@ -239,6 +208,6 @@ module.exports = {
     handleDeleteUserById,
     processRegister,
     activateUserAccount,
-    updateUserById,
+    handleUpdateUserById,
     handleManageUserStatusById
 };

@@ -2,10 +2,10 @@ const express = require('express');
 const {
     processRegister,
     activateUserAccount,
-    updateUserById,
     handleGetUsers,
     handleGetUserById,
     handleDeleteUserById,
+    handleUpdateUserById,
     handleManageUserStatusById,
 } = require('../controllers/userController');
 const uploadUserImage = require('../middlewares/uploadFile');
@@ -48,7 +48,7 @@ userRouter.put(
     '/:id',
     isLoggedIn,
     uploadUserImage.single("image"),
-    updateUserById
+    handleUpdateUserById
 );
 userRouter.put(
     '/manage-user/:id',
