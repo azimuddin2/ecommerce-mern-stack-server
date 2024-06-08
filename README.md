@@ -39,3 +39,4 @@
 35. input validation when signed in and refactoring
 36. PUT /api/users/banned-user/:id -> banned user
 37. PUT /api/users/unbanned-user/:id -> unbanned user
+38. PUT /api/users/update-password/:id -> update the password

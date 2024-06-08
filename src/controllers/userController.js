@@ -1,5 +1,6 @@
 const createHttpError = require("http-errors");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
@@ -13,6 +14,7 @@ const {
     updateUserById,
     handleUserAction
 } = require("../services/userService");
+const { findWithId } = require("../services/findWithId");
 
 const handleProcessRegister = async (req, res, next) => {
     try {
@@ -204,6 +206,53 @@ const handleManageUserStatusById = async (req, res, next) => {
     }
 };
 
+const handleUpdatePassword = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const { email, oldPassword, newPassword, confirmedPassword } = req.body;
+
+        const user = await findWithId(User, id);
+
+        // compare the password
+        const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isPasswordMatch) {
+            throw createHttpError(
+                401,
+                'Old password is not correct'
+            );
+        }
+
+        // const filter = { id };
+        const update = {
+            $set: {
+                password: newPassword,
+            },
+        };
+        const options = { new: true };
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            update,
+            options
+        ).select('-password');
+
+        if (!updatedUser) {
+            throw createHttpError(
+                401,
+                'User was not updated successfully'
+            );
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'user was password updated successfully',
+            payload: updatedUser,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     handleProcessRegister,
     handleActivateUserAccount,
@@ -211,5 +260,6 @@ module.exports = {
     handleGetUserById,
     handleDeleteUserById,
     handleUpdateUserById,
-    handleManageUserStatusById
+    handleManageUserStatusById,
+    handleUpdatePassword,
 };

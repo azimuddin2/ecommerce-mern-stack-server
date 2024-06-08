@@ -1,7 +1,7 @@
 const createError = require("http-errors");
+const bcrypt = require('bcryptjs');
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
-const bcrypt = require('bcryptjs');
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtAccessKey } = require("../secret");
 

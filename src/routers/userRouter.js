@@ -7,9 +7,10 @@ const {
     handleDeleteUserById,
     handleUpdateUserById,
     handleManageUserStatusById,
+    handleUpdatePassword,
 } = require('../controllers/userController');
 const uploadUserImage = require('../middlewares/uploadFile');
-const { validateUserRegistration } = require('../validators/auth');
+const { validateUserRegistration, validateUserPasswordUpdate } = require('../validators/auth');
 const runValidation = require('../validators');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 const userRouter = express.Router();
@@ -55,6 +56,13 @@ userRouter.put(
     isLoggedIn,
     isAdmin,
     handleManageUserStatusById
+);
+userRouter.put(
+    '/update-password/:id',
+    validateUserPasswordUpdate,
+    runValidation,
+    isLoggedIn,
+    handleUpdatePassword
 );
 
 module.exports = userRouter;
