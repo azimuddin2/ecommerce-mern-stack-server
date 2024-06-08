@@ -92,7 +92,7 @@ const validateUserPasswordUpdate = [
         .withMessage('Confirmed password is required. Enter your confirmed password')
         .custom((value, { req }) => {
             if (value !== req.body.newPassword) {
-                throw new Error("Password did not match")
+                throw new Error("New password and confirmed password did not match")
             }
             return true;
         }),
