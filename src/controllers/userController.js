@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
-const { jwtActivationKey, clientURL } = require("../secret");
+const { jwtActivationKey, clientURL, jwtResetPasswordKey } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const { MAX_FILE_SIZE } = require("../config");
 const {
@@ -222,6 +222,54 @@ const handleUpdatePassword = async (req, res, next) => {
     }
 };
 
+const handleForgetPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            throw createHttpError(
+                404,
+                'Email is incorrect or you have not verified your email address. Please register yourself first'
+            );
+        }
+
+        // create json web token
+        const token = createJsonWebToken(
+            { email },
+            jwtResetPasswordKey,
+            '1h'
+        );
+
+        // prepare email
+        const emailData = {
+            email,
+            subject: 'Reset Password Email',
+            html: `
+        <h2> Hello ${user.name}! </h2>
+        <p> Please click here to <a href="${clientURL}/api/users/reset-password/${token}" target="_blank"> Reset your password </a> </p>
+    `,
+        };
+
+        // send email with nodemailer
+        try {
+            await emailWithNodeMailer(emailData);
+        } catch (emailError) {
+            next(createHttpError(500, 'Failed to send reset password email'));
+            return;
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: `Please go to your ${email} for reset the password`,
+            payload: token,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     handleProcessRegister,
     handleActivateUserAccount,
@@ -231,4 +279,5 @@ module.exports = {
     handleUpdateUserById,
     handleManageUserStatusById,
     handleUpdatePassword,
+    handleForgetPassword,
 };

@@ -226,6 +226,9 @@ const updateUserPasswordById = async (id, email, oldPassword, newPassword, confi
 
         return updatedUser;
     } catch (error) {
+        if (error instanceof mongoose.Error.CastError) {
+            throw createError(400, 'Invalid Id');
+        }
         throw error;
     }
 };
