@@ -41,3 +41,4 @@
 37. PUT /api/users/unbanned-user/:id -> unbanned user
 38. PUT /api/users/update-password/:id -> update the password
 39. POST /api/users/forget-password -> forget the password
+40. PUT /api/users/reset-password -> reset the password

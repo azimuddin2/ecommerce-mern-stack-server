@@ -9,9 +9,15 @@ const {
     handleManageUserStatusById,
     handleUpdatePassword,
     handleForgetPassword,
+    handleResetPassword,
 } = require('../controllers/userController');
 const uploadUserImage = require('../middlewares/uploadFile');
-const { validateUserRegistration, validateUserPasswordUpdate, validateUserForgetPassword } = require('../validators/auth');
+const {
+    validateUserRegistration,
+    validateUserPasswordUpdate,
+    validateUserForgetPassword,
+    validateUserResetPassword
+} = require('../validators/auth');
 const runValidation = require('../validators');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 const userRouter = express.Router();
@@ -45,6 +51,12 @@ userRouter.delete(
     isLoggedIn,
     isAdmin,
     handleDeleteUserById
+);
+userRouter.put(
+    '/reset-password',
+    validateUserResetPassword,
+    runValidation,
+    handleResetPassword
 );
 userRouter.put(
     '/:id',

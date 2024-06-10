@@ -238,6 +238,48 @@ const handleForgetPassword = async (req, res, next) => {
     }
 };
 
+const handleResetPassword = async (req, res, next) => {
+    try {
+        const { token, password } = req.body;
+        const decoded = jwt.verify(token, jwtResetPasswordKey);
+
+        if (!decoded) {
+            throw createHttpError(
+                400,
+                'Invalid or expired token'
+            );
+        }
+
+        const filter = { email: decoded.email };
+        const update = {
+            $set: {
+                password: password,
+            },
+        };
+        const options = { new: true };
+
+        const updatedUser = await User.findOneAndUpdate(
+            filter,
+            update,
+            options
+        ).select('-password');
+
+        if (!updatedUser) {
+            throw createHttpError(
+                400,
+                'Password reset failed'
+            );
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'password reset successfully',
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     handleProcessRegister,
     handleActivateUserAccount,
@@ -248,4 +290,5 @@ module.exports = {
     handleManageUserStatusById,
     handleUpdatePassword,
     handleForgetPassword,
+    handleResetPassword,
 };
