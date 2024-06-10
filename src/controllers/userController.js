@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
-const { jwtActivationKey, clientURL, jwtResetPasswordKey } = require("../secret");
+const { jwtActivationKey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 const { MAX_FILE_SIZE } = require("../config");
 const {
@@ -13,7 +13,8 @@ const {
     updateUserById,
     handleUserAction,
     updateUserPasswordById,
-    forgetPasswordByEmail
+    forgetPasswordByEmail,
+    resetPassword
 } = require("../services/userService");
 
 const handleProcessRegister = async (req, res, next) => {
@@ -241,35 +242,7 @@ const handleForgetPassword = async (req, res, next) => {
 const handleResetPassword = async (req, res, next) => {
     try {
         const { token, password } = req.body;
-        const decoded = jwt.verify(token, jwtResetPasswordKey);
-
-        if (!decoded) {
-            throw createHttpError(
-                400,
-                'Invalid or expired token'
-            );
-        }
-
-        const filter = { email: decoded.email };
-        const update = {
-            $set: {
-                password: password,
-            },
-        };
-        const options = { new: true };
-
-        const updatedUser = await User.findOneAndUpdate(
-            filter,
-            update,
-            options
-        ).select('-password');
-
-        if (!updatedUser) {
-            throw createHttpError(
-                400,
-                'Password reset failed'
-            );
-        }
+        await resetPassword(token, password);
 
         return successResponse(res, {
             statusCode: 200,
