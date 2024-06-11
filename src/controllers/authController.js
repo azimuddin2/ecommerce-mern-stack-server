@@ -1,9 +1,10 @@
 const createError = require("http-errors");
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
-const { jwtAccessKey } = require("../secret");
+const { jwtAccessKey, jwtRefreshKey } = require("../secret");
 
 const handleLogin = async (req, res, next) => {
     try {
@@ -48,6 +49,18 @@ const handleLogin = async (req, res, next) => {
             sameSite: 'none',
         });
 
+        const refreshToken = createJsonWebToken(
+            { user },
+            jwtRefreshKey,
+            '7d'
+        );
+        res.cookie('refreshToken', refreshToken, {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+        });
+
         const userWithoutPassword = await User.findOne({ email }).select("-password");
 
         return successResponse(res, {
@@ -74,5 +87,43 @@ const handleLogout = async (req, res, next) => {
     }
 };
 
+const handleRefreshToken = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
 
-module.exports = { handleLogin, handleLogout };
+        const decodedRefreshToken = jwt.verify(refreshToken, jwtRefreshKey);
+
+        if (!decodedRefreshToken) {
+            createError(
+                401,
+                'Invalid refresh token. Please login again'
+            );
+        }
+
+        const accessToken = createJsonWebToken(
+            decodedRefreshToken.user,
+            jwtAccessKey,
+            '30m'
+        );
+        res.cookie('accessToken', accessToken, {
+            maxAge: 30 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+        });
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'New access token is generated',
+            payload: {},
+        })
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = {
+    handleLogin,
+    handleLogout,
+    handleRefreshToken,
+};
