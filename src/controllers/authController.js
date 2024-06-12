@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtAccessKey, jwtRefreshKey } = require("../secret");
+const { setAccessTokenCookie, setRefreshTokenCookie } = require("../helper/cookie");
 
 const handleLogin = async (req, res, next) => {
     try {
@@ -42,26 +43,17 @@ const handleLogin = async (req, res, next) => {
             jwtAccessKey,
             '30m'
         );
-        res.cookie('accessToken', accessToken, {
-            maxAge: 30 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-        });
+        setAccessTokenCookie(res, accessToken);
 
         const refreshToken = createJsonWebToken(
             { user },
             jwtRefreshKey,
             '7d'
         );
-        res.cookie('refreshToken', refreshToken, {
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-        });
+        setRefreshTokenCookie(res, refreshToken);
 
-        const userWithoutPassword = await User.findOne({ email }).select("-password");
+        const userWithoutPassword = user.toObject();
+        delete userWithoutPassword.password;
 
         return successResponse(res, {
             statusCode: 200,
@@ -76,6 +68,7 @@ const handleLogin = async (req, res, next) => {
 const handleLogout = async (req, res, next) => {
     try {
         res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
 
         return successResponse(res, {
             statusCode: 200,
@@ -105,12 +98,7 @@ const handleRefreshToken = async (req, res, next) => {
             jwtAccessKey,
             '30m'
         );
-        res.cookie('accessToken', accessToken, {
-            maxAge: 30 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-        });
+        setAccessTokenCookie(res, accessToken);
 
         return successResponse(res, {
             statusCode: 200,

@@ -7,7 +7,7 @@ const { deleteImage } = require("../helper/deleteImage");
 const { MAX_FILE_SIZE } = require("../config");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtResetPasswordKey, clientURL } = require("../secret");
-const emailWithNodeMailer = require("../helper/email");
+const sendEmail = require("../helper/sendEmail");
 
 const findUsers = async (search, page, limit) => {
     try {
@@ -29,7 +29,7 @@ const findUsers = async (search, page, limit) => {
 
         const count = await User.find(filter).countDocuments();
 
-        if (!users) {
+        if (!users || users.length === 0) {
             throw createError(404, 'no users found');
         };
 
@@ -103,7 +103,7 @@ const updateUserById = async (id, req) => {
             if (allowedFields.includes(key)) {
                 updates[key] = req.body[key];
             }
-            else if (['email'].includes(key)) {
+            else if (key === 'email') {
                 throw createError(400, 'Email can not be updated');
             }
         }
@@ -265,13 +265,7 @@ const forgetPasswordByEmail = async (email) => {
     `,
         };
 
-        // send email with nodemailer
-        try {
-            await emailWithNodeMailer(emailData);
-        } catch (emailError) {
-            next(createError(500, 'Failed to send reset password email'));
-            return;
-        }
+        sendEmail(emailData);
 
         return token;
     } catch (error) {

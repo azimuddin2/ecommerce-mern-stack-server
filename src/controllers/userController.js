@@ -4,7 +4,6 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientURL } = require("../secret");
-const emailWithNodeMailer = require("../helper/email");
 const { MAX_FILE_SIZE } = require("../config");
 const {
     findUsers,
@@ -16,6 +15,7 @@ const {
     forgetPasswordByEmail,
     resetPassword
 } = require("../services/userService");
+const sendEmail = require("../helper/sendEmail");
 
 const handleProcessRegister = async (req, res, next) => {
     try {
@@ -63,13 +63,7 @@ const handleProcessRegister = async (req, res, next) => {
             `,
         };
 
-        // send email with nodemailer
-        try {
-            await emailWithNodeMailer(emailData);
-        } catch (emailError) {
-            next(createHttpError(500, 'Failed to send verification email'));
-            return;
-        }
+        sendEmail(emailData);
 
         return successResponse(res, {
             statusCode: 200,

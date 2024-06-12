@@ -42,12 +42,12 @@ userRouter.get(
     handleGetUsers
 );
 userRouter.get(
-    '/:id',
+    '/:id([0-9a-fA-F]{24})',
     isLoggedIn,
     handleGetUserById
 );
 userRouter.delete(
-    '/:id',
+    '/:id([0-9a-fA-F]{24})',
     isLoggedIn,
     isAdmin,
     handleDeleteUserById
@@ -59,19 +59,19 @@ userRouter.put(
     handleResetPassword
 );
 userRouter.put(
-    '/:id',
+    '/:id([0-9a-fA-F]{24})',
     isLoggedIn,
     uploadUserImage.single("image"),
     handleUpdateUserById
 );
 userRouter.put(
-    '/manage-user/:id',
+    '/manage-user/:id([0-9a-fA-F]{24})',
     isLoggedIn,
     isAdmin,
     handleManageUserStatusById
 );
 userRouter.put(
-    '/update-password/:id',
+    '/update-password/:id([0-9a-fA-F]{24})',
     validateUserPasswordUpdate,
     runValidation,
     isLoggedIn,
