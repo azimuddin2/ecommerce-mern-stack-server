@@ -1,5 +1,5 @@
 const express = require('express');
-const { handleCreateCategory, handleGetCategories } = require('../controllers/categoryController');
+const { handleCreateCategory, handleGetCategories, handleGetCategory } = require('../controllers/categoryController');
 const { validateCategory } = require('../validators/category');
 const runValidation = require('../validators');
 const { isLoggedIn, isAdmin } = require('../middlewares/auth');
@@ -16,6 +16,10 @@ categoryRouter.post(
 categoryRouter.get(
     '/',
     handleGetCategories
+);
+categoryRouter.get(
+    '/:slug',
+    handleGetCategory
 );
 
 module.exports = categoryRouter;
