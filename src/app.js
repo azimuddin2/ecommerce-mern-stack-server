@@ -9,6 +9,7 @@ const userRouter = require('./routers/userRouter');
 const seedRouter = require('./routers/seedRouter');
 const { errorResponse } = require('./controllers/responseController');
 const authRouter = require('./routers/authRouter');
+const categoryRouter = require('./routers/categoryRouter');
 const app = express();
 
 const rateLimiter = rateLimit({
@@ -26,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/categories', categoryRouter);
 app.use('/api/seed', seedRouter);
 
 app.get('/test', (req, res) => {
@@ -36,7 +38,7 @@ app.get('/test', (req, res) => {
 
 app.get('/', (req, res) => {
     res.send({
-        message: 'Ecommerce MERN Stack Server App Running.'
+        message: 'E-commerce MERN Stack Server App Running.'
     });
 });
 
