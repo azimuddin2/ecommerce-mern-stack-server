@@ -1,5 +1,5 @@
 const { successResponse } = require("./responseController");
-const { createCategory, getCategories, getCategory } = require("../services/categoryService");
+const { createCategory, getCategories, getCategory, updateCategory } = require("../services/categoryService");
 
 const handleCreateCategory = async (req, res, next) => {
     try {
@@ -32,7 +32,7 @@ const handleGetCategories = async (req, res, next) => {
 
 const handleGetCategory = async (req, res, next) => {
     try {
-        const {slug} = req.params;
+        const { slug } = req.params;
         const category = await getCategory(slug);
 
         return successResponse(res, {
@@ -45,8 +45,26 @@ const handleGetCategory = async (req, res, next) => {
     }
 };
 
+const handleUpdateCategory = async (req, res, next) => {
+    try {
+        const { slug } = req.params;
+        const { name } = req.body;
+
+        const result = await updateCategory(slug, name);
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'category was updated successfully',
+            payload: result,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     handleCreateCategory,
     handleGetCategories,
     handleGetCategory,
+    handleUpdateCategory,
 };

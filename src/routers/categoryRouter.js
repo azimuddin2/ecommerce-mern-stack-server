@@ -1,5 +1,5 @@
 const express = require('express');
-const { handleCreateCategory, handleGetCategories, handleGetCategory } = require('../controllers/categoryController');
+const { handleCreateCategory, handleGetCategories, handleGetCategory, handleUpdateCategory } = require('../controllers/categoryController');
 const { validateCategory } = require('../validators/category');
 const runValidation = require('../validators');
 const { isLoggedIn, isAdmin } = require('../middlewares/auth');
@@ -20,6 +20,14 @@ categoryRouter.get(
 categoryRouter.get(
     '/:slug',
     handleGetCategory
+);
+categoryRouter.put(
+    '/:slug',
+    validateCategory,
+    runValidation,
+    isLoggedIn,
+    isAdmin,
+    handleUpdateCategory
 );
 
 module.exports = categoryRouter;

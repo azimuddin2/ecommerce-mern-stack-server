@@ -31,15 +31,47 @@ const getCategory = async (slug) => {
     if (!category) {
         throw createError(
             404,
-            `${slug} category not found`
+            `${slug} category is not found`
         )
     }
 
     return category;
 };
 
+const updateCategory = async (slug, name) => {
+    const filter = { slug: slug };
+    const category = await Category.findOne(filter);
+
+    if (!category) {
+        throw createError(
+            404,
+            `${slug} category is not found`
+        );
+    }
+
+    const updateDoc = {
+        $set: {
+            name: name,
+            slug: slugify(name),
+        },
+    };
+    const options = { new: true };
+
+    const updatedCategory = await Category.findOneAndUpdate(filter, updateDoc, options);
+
+    if (!updatedCategory) {
+        throw createError(
+            401,
+            'Category was not updated successfully'
+        );
+    }
+
+    return updatedCategory;
+};
+
 module.exports = {
     createCategory,
     getCategories,
     getCategory,
+    updateCategory,
 };
