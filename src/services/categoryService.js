@@ -69,9 +69,31 @@ const updateCategory = async (slug, name) => {
     return updatedCategory;
 };
 
+const deleteCategory = async (slug) => {
+    const filter = { slug: slug };
+    const category = await Category.findOne(filter);
+
+    if (!category) {
+        throw createError(
+            404,
+            `${slug} category is not found`
+        );
+    }
+
+    const result = await Category.findOneAndDelete(filter);
+
+    if (!result) {
+        throw createError(
+            401,
+            'Category was not deleted successfully'
+        );
+    }
+};
+
 module.exports = {
     createCategory,
     getCategories,
     getCategory,
     updateCategory,
+    deleteCategory,
 };
