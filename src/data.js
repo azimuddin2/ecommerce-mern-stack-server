@@ -153,7 +153,7 @@ const data = {
         {
             name: "ASUS VivoBook 15 X1504ZA 12th Gen Intel Core i7-1255U",
             slug: "asus-vivo-book-15-x1504za-12th-gen-intel-core-i7-1255u",
-            description: "",
+            description: "The ASUS Inspiron 15 3511, powered by the 11th Generation Intel Core i3 processor and complemented by Intel UHD Graphics, represents a compelling blend of performance and visuals. Designed to meet the demands of modern computing, this laptop offers a seamless experience for both work and play.",
             image: "https://adminapi.applegadgetsbd.com/storage/media/large/ASUS-VivoBook-15-A1504ZA-b-6633.jpg",
             price: 1000,
             brand: "ASUS VivoBook",

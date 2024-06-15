@@ -23,7 +23,7 @@ const productSchema = new Schema({
     },
     image: {
         type: String,
-        required: [true, 'Product image is required']
+        required: [true, 'Product image is required'],
     },
     price: {
         type: Number,
@@ -42,7 +42,6 @@ const productSchema = new Schema({
         type: String,
         required: [true, 'Product brand name is required'],
         trim: true,
-        minlength: [5, 'The length of product brand name can be minimum 5 characters'],
     },
     quantity: {
         type: Number,
