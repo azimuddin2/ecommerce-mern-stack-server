@@ -38,6 +38,12 @@ const productSchema = new Schema({
             }
         }
     },
+    brand: {
+        type: String,
+        required: [true, 'Product brand name is required'],
+        trim: true,
+        minlength: [5, 'The length of product brand name can be minimum 5 characters'],
+    },
     quantity: {
         type: Number,
         required: [true, 'Product quantity is required'],
