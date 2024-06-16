@@ -23,7 +23,10 @@ const handleProcessRegister = async (req, res, next) => {
 
         const image = req.file?.path;
         if (image && image.size > MAX_FILE_SIZE) {
-            throw createHttpError(400, 'File to large. It must be less than 2 MB');
+            throw createHttpError(
+                400,
+                'File to large. It must be less than 2 MB'
+            );
         }
 
         const userExists = await User.exists({ email: email });

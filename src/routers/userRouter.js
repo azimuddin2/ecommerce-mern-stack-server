@@ -11,7 +11,7 @@ const {
     handleForgetPassword,
     handleResetPassword,
 } = require('../controllers/userController');
-const uploadUserImage = require('../middlewares/uploadFile');
+const { uploadUserImage } = require('../middlewares/uploadFile');
 const {
     validateUserRegistration,
     validateUserPasswordUpdate,
