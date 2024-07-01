@@ -64,6 +64,7 @@ const getProducts = async (search, page, limit) => {
     return {
         products,
         pagination: {
+            totalProduct: productCount,
             totalPages: Math.ceil(productCount / limit),
             currentPage: page,
             previousPage: page - 1 > 0 ? page - 1 : null,
@@ -86,8 +87,29 @@ const getProduct = async (slug) => {
     return product;
 };
 
+const deleteProduct = async (slug) => {
+    const filter = { slug: slug };
+    const product = await Product.findOne(filter);
+
+    if (!product) {
+        throw createError(
+            404,
+            `${slug} product is not found`
+        )
+    }
+
+    const result = await Product.findOneAndDelete(filter);
+    if (!result) {
+        throw createError(
+            401,
+            'Product was not deleted successfully'
+        );
+    }
+};
+
 module.exports = {
     createProduct,
     getProducts,
     getProduct,
+    deleteProduct,
 };

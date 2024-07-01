@@ -2,7 +2,8 @@ const express = require('express');
 const {
     handleCreateProduct,
     handleGetProducts,
-    handleGetProduct
+    handleGetProduct,
+    handleDeleteProduct
 } = require('../controllers/productController');
 const { validateProduct } = require('../validators/product');
 const runValidation = require('../validators');
@@ -24,6 +25,12 @@ productRouter.get(
 productRouter.get(
     '/:slug',
     handleGetProduct
+);
+productRouter.delete(
+    '/:slug',
+    isLoggedIn,
+    isAdmin,
+    handleDeleteProduct
 );
 
 module.exports = productRouter;
