@@ -3,10 +3,26 @@ const slugify = require("slugify");
 const Category = require("../models/categoryModel");
 
 const createCategory = async (name) => {
+    const filter = { name: name };
+    const categoryExists = await Category.exists(filter);
+    if (categoryExists) {
+        throw createError(
+            409,
+            `${name} category already exists.`
+        );
+    }
+
     const newCategory = await Category.create({
         name: name,
         slug: slugify(name)
     });
+
+    if (!newCategory) {
+        throw createError(
+            401,
+            'Category was not created successfully'
+        );
+    }
 
     return newCategory;
 };
