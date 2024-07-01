@@ -6,7 +6,7 @@ const productSchema = new Schema({
         required: [true, 'Product name is required'],
         trim: true,
         minlength: [3, 'The length of product name can be minimum 3 characters'],
-        maxlength: [80, 'The length of product name can be maximum 80 characters']
+        maxlength: [80, 'The length of product name can be maximum 80 characters'],
     },
     slug: {
         type: String,
@@ -23,7 +23,7 @@ const productSchema = new Schema({
     },
     image: {
         type: String,
-        required: [true, 'Product image is required'],
+        required: [true, 'Product image URL is required'],
     },
     price: {
         type: Number,

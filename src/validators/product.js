@@ -16,9 +16,9 @@ const validateProduct = [
         .withMessage('Product description should be at least 100-500 characters long'),
 
     body("image")
-        .isString()
+        .trim()
         .notEmpty()
-        .withMessage('Image is required'),
+        .withMessage('Image URL is required'),
 
     body("price")
         .trim()
@@ -38,6 +38,13 @@ const validateProduct = [
         .withMessage('Quantity is required')
         .isInt({ min: 1 })
         .withMessage('Quantity must be a positive integer'),
+
+    body("sold")
+        .trim()
+        .notEmpty()
+        .withMessage('Sold quantity is required')
+        .isInt({ min: 1 })
+        .withMessage('Sold quantity must be a positive integer'),
 
     body("category")
         .trim()
