@@ -1,4 +1,8 @@
-const { createProduct, getProducts } = require("../services/productService");
+const {
+    createProduct,
+    getProducts,
+    getProduct
+} = require("../services/productService");
 const { successResponse } = require("./responseController");
 
 const handleCreateProduct = async (req, res, next) => {
@@ -36,7 +40,23 @@ const handleGetProducts = async (req, res, next) => {
     }
 };
 
+const handleGetProduct = async (req, res, next) => {
+    try {
+        const { slug } = req.params;
+        const product = await getProduct(slug);
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'Product fetched successfully',
+            payload: product,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     handleCreateProduct,
     handleGetProducts,
+    handleGetProduct,
 };

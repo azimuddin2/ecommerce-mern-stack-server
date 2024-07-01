@@ -1,5 +1,9 @@
 const express = require('express');
-const { handleCreateProduct, handleGetProducts } = require('../controllers/productController');
+const {
+    handleCreateProduct,
+    handleGetProducts,
+    handleGetProduct
+} = require('../controllers/productController');
 const { validateProduct } = require('../validators/product');
 const runValidation = require('../validators');
 const { isLoggedIn, isAdmin } = require('../middlewares/auth');
@@ -16,6 +20,10 @@ productRouter.post(
 productRouter.get(
     '/',
     handleGetProducts
+);
+productRouter.get(
+    '/:slug',
+    handleGetProduct
 );
 
 module.exports = productRouter;

@@ -72,7 +72,22 @@ const getProducts = async (search, page, limit) => {
     };
 };
 
+const getProduct = async (slug) => {
+    const filter = { slug: slug };
+    const product = await Product.findOne(filter).populate('category');
+
+    if (!product) {
+        throw createError(
+            404,
+            `${slug} product is not found`
+        )
+    }
+
+    return product;
+};
+
 module.exports = {
     createProduct,
     getProducts,
+    getProduct,
 };
