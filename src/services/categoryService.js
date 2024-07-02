@@ -3,106 +3,126 @@ const slugify = require("slugify");
 const Category = require("../models/categoryModel");
 
 const createCategory = async (name) => {
-    const filter = { name: name };
-    const categoryExists = await Category.exists(filter);
-    if (categoryExists) {
-        throw createError(
-            409,
-            `${name} category already exists.`
-        );
+    try {
+        const filter = { name: name };
+        const categoryExists = await Category.exists(filter);
+        if (categoryExists) {
+            throw createError(
+                409,
+                `${name} category already exists.`
+            );
+        }
+
+        const newCategory = await Category.create({
+            name: name,
+            slug: slugify(name)
+        });
+
+        if (!newCategory) {
+            throw createError(
+                401,
+                'Category was not created successfully'
+            );
+        }
+
+        return newCategory;
+    } catch (error) {
+        throw error;
     }
-
-    const newCategory = await Category.create({
-        name: name,
-        slug: slugify(name)
-    });
-
-    if (!newCategory) {
-        throw createError(
-            401,
-            'Category was not created successfully'
-        );
-    }
-
-    return newCategory;
 };
 
 const getCategories = async () => {
-    const categories = await Category.find({}).select('name slug').lean();
+    try {
+        const categories = await Category.find({}).select('name slug').lean();
 
-    if (!categories || categories.length === 0) {
-        throw createError(
-            404,
-            'No categories found'
-        );
+        if (!categories || categories.length === 0) {
+            throw createError(
+                404,
+                'No categories found'
+            );
+        }
+
+        return categories;
+    } catch (error) {
+        throw error;
     }
-
-    return categories;
 };
 
 const getCategory = async (slug) => {
-    const filter = { slug: slug };
-    const category = await Category.findOne(filter).select('name slug').lean();
+    try {
+        const filter = { slug: slug };
+        const category = await Category.findOne(filter).select('name slug').lean();
 
-    if (!category) {
-        throw createError(
-            404,
-            `${slug} category is not found`
-        )
+        if (!category) {
+            throw createError(
+                404,
+                `${slug} category is not found`
+            )
+        }
+
+        return category;
+    } catch (error) {
+        throw error;
     }
-
-    return category;
 };
 
 const updateCategory = async (slug, name) => {
-    const filter = { slug: slug };
-    const category = await Category.findOne(filter);
+    try {
+        const filter = { slug: slug };
+        const category = await Category.findOne(filter);
 
-    if (!category) {
-        throw createError(
-            404,
-            `${slug} category is not found`
-        );
+        if (!category) {
+            throw createError(
+                404,
+                `${slug} category is not found`
+            );
+        }
+
+        const updateDoc = {
+            $set: {
+                name: name,
+                slug: slugify(name),
+            },
+        };
+        const options = { new: true };
+
+        const updatedCategory = await Category.findOneAndUpdate(filter, updateDoc, options);
+
+        if (!updatedCategory) {
+            throw createError(
+                401,
+                'Category was not updated successfully'
+            );
+        }
+
+        return updatedCategory;
+    } catch (error) {
+        throw error;
     }
-
-    const updateDoc = {
-        $set: {
-            name: name,
-            slug: slugify(name),
-        },
-    };
-    const options = { new: true };
-
-    const updatedCategory = await Category.findOneAndUpdate(filter, updateDoc, options);
-
-    if (!updatedCategory) {
-        throw createError(
-            401,
-            'Category was not updated successfully'
-        );
-    }
-
-    return updatedCategory;
 };
 
 const deleteCategory = async (slug) => {
-    const filter = { slug: slug };
-    const category = await Category.findOne(filter);
+    try {
+        const filter = { slug: slug };
+        const category = await Category.findOne(filter);
 
-    if (!category) {
-        throw createError(
-            404,
-            `${slug} category is not found`
-        );
-    }
+        if (!category) {
+            throw createError(
+                404,
+                `${slug} category is not found`
+            );
+        }
 
-    const result = await Category.findOneAndDelete(filter);
+        const result = await Category.findOneAndDelete(filter);
 
-    if (!result) {
-        throw createError(
-            401,
-            'Category was not deleted successfully'
-        );
+        if (!result) {
+            throw createError(
+                401,
+                'Category was not deleted successfully'
+            );
+        }
+    } catch (error) {
+        throw error;
     }
 };
 
