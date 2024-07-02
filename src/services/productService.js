@@ -107,9 +107,46 @@ const deleteProduct = async (slug) => {
     }
 };
 
-const updateProduct = async () => {
+const updateProduct = async (slug, req) => {
     try {
+        const { name, description, image, price, brand, quantity, sold, category, shipping } = req.body;
+        
+        const filter = { slug: slug };
+        const product = await Product.findOne(filter);
 
+        if (!product) {
+            throw createError(
+                404,
+                `${slug} product is not found`
+            );
+        }
+
+        const updateDoc = {
+            $set: {
+                name: name,
+                slug: slugify(name),
+                description: description,
+                image: image,
+                price: price,
+                brand: brand,
+                quantity: quantity,
+                sold: sold,
+                category: category,
+                shipping: shipping
+            },
+        };
+        const options = { new: true };
+
+        const updatedProduct = await Product.findOneAndUpdate(filter, updateDoc, options).populate('category');
+
+        if (!updatedProduct) {
+            throw createError(
+                401,
+                'product was not updated successfully'
+            );
+        }
+
+        return updatedProduct;
     } catch (error) {
         throw error;
     }

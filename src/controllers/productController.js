@@ -2,7 +2,8 @@ const {
     createProduct,
     getProducts,
     getProduct,
-    deleteProduct
+    deleteProduct,
+    updateProduct
 } = require("../services/productService");
 const { successResponse } = require("./responseController");
 
@@ -72,7 +73,14 @@ const handleDeleteProduct = async (req, res, next) => {
 
 const handleUpdateProduct = async (req, res, next) => {
     try {
+        const { slug } = req.params;
+        const updatedProduct = await updateProduct(slug, req);
 
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'Product was updated successfully',
+            payload: updatedProduct,
+        });
     } catch (error) {
         next(error);
     }
