@@ -107,9 +107,18 @@ const deleteProduct = async (slug) => {
     }
 };
 
+const updateProduct = async () => {
+    try {
+
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     createProduct,
     getProducts,
     getProduct,
     deleteProduct,
+    updateProduct,
 };

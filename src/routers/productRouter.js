@@ -3,7 +3,8 @@ const {
     handleCreateProduct,
     handleGetProducts,
     handleGetProduct,
-    handleDeleteProduct
+    handleDeleteProduct,
+    handleUpdateProduct
 } = require('../controllers/productController');
 const { validateProduct } = require('../validators/product');
 const runValidation = require('../validators');
@@ -31,6 +32,14 @@ productRouter.delete(
     isLoggedIn,
     isAdmin,
     handleDeleteProduct
+);
+productRouter.put(
+    '/:slug',
+    validateProduct,
+    runValidation,
+    isLoggedIn,
+    isAdmin,
+    handleUpdateProduct
 );
 
 module.exports = productRouter;

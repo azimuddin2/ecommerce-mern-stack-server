@@ -70,9 +70,18 @@ const handleDeleteProduct = async (req, res, next) => {
     }
 };
 
+const handleUpdateProduct = async (req, res, next) => {
+    try {
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     handleCreateProduct,
     handleGetProducts,
     handleGetProduct,
     handleDeleteProduct,
+    handleUpdateProduct,
 };
