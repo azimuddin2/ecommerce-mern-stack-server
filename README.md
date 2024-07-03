@@ -4,7 +4,7 @@
 
 
 ✅ Users API
-🔖 User model and schema with validations for user
+ - 🔖 User model and schema with validations for user
 
 1. POST /api/users/process-register -> create the user account (D)
     - get multi-part form data from the request body using multer
@@ -77,7 +77,7 @@
 
 
 ✅ Category API
-🔖 Create category schema and model
+ - 🔖 Create category schema and model
     - name, slug (how to use slugify npm)
     - slug
     - Create category validations
@@ -92,7 +92,7 @@
 
 
 ✅ Product API
-🔖 create product schema and model
+ - 🔖 create product schema and model
     - ref Category model
     - create product validation
     - create product routes and controller
@@ -105,12 +105,12 @@
 
 
 ✅ Middleware
-    - isLoggedIn
-    - isLoggedOut
-    - isAdmin
-    - uploadFile
-    - getRefreshToken
-    - userValidation
+   - isLoggedIn (D)
+   - isLoggedOut
+   - isAdmin
+   - uploadFile
+   - getRefreshToken
+   - userValidation
 
 
 ✅ Seed API For Testing 
@@ -118,8 +118,9 @@
 2. GET /api/seed/products -> products create (D)
 
 
-
-
+- ✅ package that we will need
+  `npm install express cors http-errors multer body-parser bcrypt jsonwebtoken nodemailer cookie-parser`
+  `npm install --save-dev morgan nodemon`
 
 
 
