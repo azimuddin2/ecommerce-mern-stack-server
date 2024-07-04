@@ -1,5 +1,5 @@
 # E-commerce MERN Stack Project
-# Back-end Development
+## Back-end Development
 
 
 ✅ Project setup
@@ -13,7 +13,7 @@
    - MVC pattern in software architecture
 
 
-`✅ Database setup`
+✅ Database setup
    - connect to mongodb atlas database / local mongodb compass
 
 
