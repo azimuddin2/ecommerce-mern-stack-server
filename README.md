@@ -2,6 +2,20 @@
 # Back-end Development
 
 
+✅ Project setup
+   - create express server
+   - setup export & import
+   - nodemon and morgan package -> developer dependencies
+   - How to secure API -> xss-clean, express-rate-limit
+   - API testing with postman
+   - Environment variable & .gitignore
+   - create README.md file
+   - MVC pattern in software architecture
+
+
+`✅ Database setup`
+   - connect to mongodb atlas database / local mongodb compass
+
 
 ✅ Users API
  - 🔖 User model and schema with validations for user
@@ -16,7 +30,7 @@
 
 2. POST /api/users/activate -> activate the user account (D)
     - get the jwt from request
-    - check existance of jwt
+    - check existing of jwt
     - verify the jwt & decode the data
     - create & save the new user
 
@@ -58,7 +72,7 @@
 1. POST /api/auth/login -> isLoggedOut -> user login (D)
     - middlewares: validateUserLogin, runValidation using express-validator, isLoggedOut
     - extract request body
-    - check user's existance
+    - check user existing
     - compare the password & return response
     - check user is banned & return response
     - create jwt token with an expiry time
@@ -71,7 +85,7 @@
 3. GET /api/auth/refresh-token -> get refresh token (D)
     - get old access token from cookie
     - verify old token
-    - if verified - clear exisitng cookie, create refresh token (new token), cookie, return refresh token
+    - if verified - clear existing cookie, create refresh token (new token), cookie, return refresh token
 
 4. GET /api/auth/protected -> protected route (D)
 
@@ -98,14 +112,14 @@
     - create product routes and controller
 
 1. POST /api/products -> create product (D)
-2. GET /api/products -> get all products (D)
+2. GET /api/products -> get all products including search & pagination (D)
 3. GET /api/products/:slug -> get single product (D)
 4. DELETE /api/products/:slug -> delete product (D)
 5. PUT /api/products/:slug -> update product (D)
 
 
 ✅ Middleware
-   - isLoggedIn (D)
+   - isLoggedIn
    - isLoggedOut
    - isAdmin
    - uploadFile
@@ -118,51 +132,7 @@
 2. GET /api/seed/products -> products create (D)
 
 
-- ✅ package that we will need
-  `npm install express cors http-errors multer body-parser bcrypt jsonwebtoken nodemailer cookie-parser`
-  `npm install --save-dev morgan nodemon`
-
-
-
-
-# Project planning
-1. Environment setup
-2. Create express server
-3. HTTP request & response
-4. nodemon and morgan package
-5. API testing with postman
-6. Middleware & types of Middleware
-7. Express error handling middleware
-8. How to handle HTTP errors -> http errors
-9. How to secure API -> xss-clean, express-rate-limit
-10. Environment variable & .gitignore
-11. MVC pattern in software architecture
-12. Connect to MongoDB database
-13. Schema & Model fo user
-14. Create seed route for testing
-15. GET /api/users -> isAdmin -> getAllUsers -> search + pagination functionality
-16. responseHandler controller for error & success
-17. GET /api/users/:id -> get a single user by id
-18. How to create services in the backend
-19. DELETE /api/users/:id -> delete a single user by id
-20. Refactoring & reusability, dynamic
-21. deleteImage helper
-22. POST /api/users/process-register -> process the registration
-23. create json web token
-24. setup smtp server & prepare email
-25. send email with nodemailer
-26. POST /api/users/verify -> verify + register into database
-27. add multer middleware for file upload
-28. filtering files by size and types
-29. add express validator middleware
-30. should we store image as string or buffer
-31. PUT /api/users/:id -> update a single user by id
-32. POST /api/auth/login -> user login
-33. POST /api/auth/logout -> user logout
-34. Middleware -> isLoggedIn, isLoggedOut, isAdmin
-35. input validation when signed in and refactoring
-36. PUT /api/users/banned-user/:id -> banned user
-37. PUT /api/users/unbanned-user/:id -> unbanned user
-38. PUT /api/users/update-password/:id -> update the password
-39. POST /api/users/forget-password -> forget the password
-40. PUT /api/users/reset-password -> reset the password
+✅ package that we will need
+ - `npm install express cors http-errors multer body-parser bcrypt jsonwebtoken nodemailer cookie-parser express-validator dotenv express-rate-limit mongoose slugify xss-clean`
+ - `npm install --save-dev morgan nodemon`
+  
